@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {PoolComponent} from '../pool/pool.component';
+import {FieldComponent} from '../field/field.component';
 
 @Component({
   selector: 'app-board',
@@ -7,9 +7,9 @@ import {PoolComponent} from '../pool/pool.component';
   styleUrls: ['./board.component.sass']
 })
 export class BoardComponent implements OnInit {
-  poolList: PoolComponent[] = [];
+  poolList: FieldComponent[] = [];
   bombCount: number = 10;
-  poolBombList: PoolComponent[] = [];
+  poolBombList: FieldComponent[] = [];
   private allBombsPlanted = false;
 
   @Input() poolCount: number;
@@ -27,7 +27,7 @@ export class BoardComponent implements OnInit {
 
   createBoardFromPools() {
     for (let i = 0; i < this.poolCount; i++) {
-      const pool = new PoolComponent();
+      const pool = new FieldComponent();
       pool.poolID = i;
       this.poolList.push(pool);
     }

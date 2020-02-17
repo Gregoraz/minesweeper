@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PoolComponent } from './pool.component';
+import { FieldComponent } from './field.component';
 
 describe('PoolComponent', () => {
-  let component: PoolComponent;
-  let fixture: ComponentFixture<PoolComponent>;
+  let component: FieldComponent;
+  let fixture: ComponentFixture<FieldComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PoolComponent ]
+      declarations: [ FieldComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PoolComponent);
+    fixture = TestBed.createComponent(FieldComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

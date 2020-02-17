@@ -3,11 +3,11 @@ import {style} from '@angular/animations';
 
 @Component({
   selector: 'app-pool',
-  templateUrl: './pool.component.html',
-  styleUrls: ['./pool.component.sass']
+  templateUrl: './field.component.html',
+  styleUrls: ['./field.component.sass']
 })
 
-export class PoolComponent implements OnInit {
+export class FieldComponent implements OnInit {
   isBomb = false;
   isInfo = false;
   isClickable = true;
@@ -29,6 +29,7 @@ export class PoolComponent implements OnInit {
 
   onPoolClick(event: any) {
     this.expandMe();
+    this.isClickable = false;
     console.log(event);
   }
 
