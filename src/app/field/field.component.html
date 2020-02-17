@@ -1,2 +1,5 @@
-<div class="pool" (click)="isClickable ? onPoolClick($event) : false" [ngClass]="{'is-selected': isExpanded}">
+<div class="pool"
+     (click)="isClickable && !isMarkedAsBomb ? onFieldClick($event) : false"
+     (contextmenu)="isClickable ? onRightClick($event) : false"
+     [ngClass]="{'is-selected': isExpanded, 'is-marked': isMarkedAsBomb}">
 </div>

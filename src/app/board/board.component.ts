@@ -7,10 +7,11 @@ import {FieldComponent} from '../field/field.component';
   styleUrls: ['./board.component.sass']
 })
 export class BoardComponent implements OnInit {
-  poolList: FieldComponent[] = [];
+  fieldList: FieldComponent[] = [];
   bombCount: number = 10;
   poolBombList: FieldComponent[] = [];
   private allBombsPlanted = false;
+  isGameOver = false;
 
   @Input() poolCount: number;
 
@@ -29,16 +30,16 @@ export class BoardComponent implements OnInit {
     for (let i = 0; i < this.poolCount; i++) {
       const pool = new FieldComponent();
       pool.poolID = i;
-      this.poolList.push(pool);
+      this.fieldList.push(pool);
     }
   }
 
   plantTheBombs() {
-    const poolCount = this.poolList.length - 1;
+    const poolCount = this.fieldList.length - 1;
     const poolToPlant = Math.floor((Math.random() * poolCount));
     if (!this.checkIfHasBomb(poolToPlant)) {
-      this.poolBombList.push(this.poolList[poolToPlant]);
-      this.poolList[poolToPlant].isBomb = true;
+      this.poolBombList.push(this.fieldList[poolToPlant]);
+      this.fieldList[poolToPlant].isBomb = true;
     }
     if (this.poolBombList.length === this.bombCount) {
       this.allBombsPlanted = true;
@@ -53,6 +54,6 @@ export class BoardComponent implements OnInit {
       }
     }
     return false;
-}
+  }
 
 }

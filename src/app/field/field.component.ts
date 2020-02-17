@@ -18,7 +18,8 @@ export class FieldComponent implements OnInit {
 
   @Input() display: string;
 
-  constructor() {}
+  constructor() {
+  }
 
   ngOnInit() {
   }
@@ -27,10 +28,15 @@ export class FieldComponent implements OnInit {
     this.isExpanded = !this.isExpanded;
   }
 
-  onPoolClick(event: any) {
+  onFieldClick(event: any) {
     this.expandMe();
     this.isClickable = false;
     console.log(event);
+  }
+
+  onRightClick(event: any) {
+    event.preventDefault();
+    this.isMarkedAsBomb = !this.isMarkedAsBomb;
   }
 
 }
