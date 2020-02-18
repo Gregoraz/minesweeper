@@ -1,3 +1,10 @@
 <div [className]="'board'">
-<app-pool *ngFor="let pool of fieldList"></app-pool>
+<app-pool *ngFor="let field of fieldList"
+          [isBomb]="field.isBomb"
+          [poolX]="field.poolX"
+          [poolY]="field.poolY"
+          [poolID]="field.poolID"
+          [isInfo]="field.isInfo"
+>
+</app-pool>
 </div>

@@ -8,17 +8,23 @@ import {style} from '@angular/animations';
 })
 
 export class FieldComponent implements OnInit {
-  isBomb = false;
-  isInfo = false;
   isClickable = true;
   touchesBombCount = 0;
   isMarkedAsBomb = false;
   isExpanded = false;
-  poolID: number;
+  isBombExpanded = false;
 
-  @Input() display: string;
+  @Input() isBomb: boolean;
+  @Input() poolX: number;
+  @Input() poolY: number;
+  @Input() poolID: number;
+  @Input() isInfo: number;
 
   constructor() {
+  }
+
+  setIsBomb() {
+    this.isBomb = true;
   }
 
   ngOnInit() {
@@ -26,12 +32,15 @@ export class FieldComponent implements OnInit {
 
   expandMe() {
     this.isExpanded = !this.isExpanded;
+    if (this.isBomb && this.isExpanded) {
+      this.isBombExpanded = !this.isBombExpanded;
+    }
   }
 
   onFieldClick(event: any) {
     this.expandMe();
     this.isClickable = false;
-    console.log(event);
+    console.log(this);
   }
 
   onRightClick(event: any) {

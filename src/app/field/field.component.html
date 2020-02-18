@@ -1,5 +1,10 @@
 <div class="pool"
      (click)="isClickable && !isMarkedAsBomb ? onFieldClick($event) : false"
      (contextmenu)="isClickable ? onRightClick($event) : false"
-     [ngClass]="{'is-selected': isExpanded, 'is-marked': isMarkedAsBomb}">
+     [ngClass]="{'is-selected': isExpanded, 'is-marked': isMarkedAsBomb, 'is-bomb': isBomb}">
+  <span class="pool-info-container">
+    <h3 class="pool-info-content" *ngIf="isExpanded && !isBomb">
+      {{ poolX }}
+    </h3>
+  </span>
 </div>

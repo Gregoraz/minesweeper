@@ -1,7 +1,7 @@
 .pool
   width: 25px
   height: 25px
-  background-color: grey
+  background-color: #c2c2c2
   border-right: 1px solid #292929
   border-bottom: 1px solid #292929
   border-left: 1px solid darkgray
@@ -11,9 +11,34 @@
   margin: 0
   padding: 0
 
+.is-selected
+  background-color: #f2f2f2
 
-.pool.is-selected
-  background-color: red
+.is-marked
+  background-image: url("src/assets/img/flag.png")
+  background-size: cover
 
-.pool.is-marked
-  background-color: blue
+.is-bomb
+  background-image: url("src/assets/img/mine.png")
+  background-size: cover
+  &.is-selected
+   background-image: url("src/assets/img/red_mine.png")
+
+.pool-info-container
+  text-align: center
+  margin-left: 25%
+  margin-right: 25%
+  width: 100%
+  position: relative
+  .pool-info-content
+    color: red
+    margin-top: 0
+    margin-bottom: 0
+    margin-left: 7px
+    padding: 0
+    position: absolute
+    size: 20px
+    text-align: center
+    display: flex
+    align-items: center
+    justify-content: center
