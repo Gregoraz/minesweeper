@@ -9,7 +9,6 @@ import {style} from '@angular/animations';
 
 export class FieldComponent implements OnInit {
   isClickable = true;
-  touchesBombCount = 0;
   isMarkedAsBomb = false;
   isExpanded = false;
   isBombExpanded = false;
@@ -18,7 +17,9 @@ export class FieldComponent implements OnInit {
   @Input() poolX: number;
   @Input() poolY: number;
   @Input() poolID: number;
-  @Input() isInfo: number;
+  @Input() isInfo: boolean;
+  @Input() neighbors: number[];
+  @Input() touchesBombCount: number;
 
   constructor() {
   }
@@ -40,7 +41,6 @@ export class FieldComponent implements OnInit {
   onFieldClick(event: any) {
     this.expandMe();
     this.isClickable = false;
-    console.log(this);
   }
 
   onRightClick(event: any) {

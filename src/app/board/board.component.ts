@@ -8,9 +8,9 @@ import {FieldComponent} from '../field/field.component';
 })
 export class BoardComponent implements OnInit {
   fieldList: FieldComponent[] = [];
-  bombCount: number = 10;
+  bombCount = 10;
   poolBombList: FieldComponent[] = [];
-  fieldBombNeighboorID: number[] = [];
+  fieldBombNeighbor: FieldComponent[] = [];
   private allBombsPlanted = false;
   isGameOver = false;
 
@@ -24,9 +24,9 @@ export class BoardComponent implements OnInit {
     while (!this.allBombsPlanted) {
       this.plantTheBombs();
     }
-    this.createBombNeighbors();
-    // this.createInfoBoxes();
-    console.log(this.fieldBombNeighboorID);
+    this.setZerosToEveryField();
+    this.createInfoBoxes();
+    console.log(this);
   }
 
   createBoardFromPools() {
@@ -43,91 +43,87 @@ export class BoardComponent implements OnInit {
     }
   }
 
-  createBombNeighbors() {
-    for (let i = 0, iMax = this.poolBombList.length; i < iMax; i++) {
-      for (let j = 0; j < 4; j++) {
-        switch (j) {
-          case 0:
-            if (this.poolBombList[i].poolX - 1 >= 0 &&
-              this.poolBombList[i].poolY - 1 >= 0 &&
-              this.fieldBombNeighboorID.indexOf(this.poolBombList[i].poolID) === -1) {
-              this.fieldBombNeighboorID.push(this.poolBombList[i].poolID);
-            }
-            break;
-
-          case 1:
-            if (this.poolBombList[i].poolX - 1 >= 0 &&
-              this.poolBombList[i].poolY + 1 < this.poolCount &&
-              this.fieldBombNeighboorID.indexOf(this.poolBombList[i].poolID) === -1) {
-              this.fieldBombNeighboorID.push(this.poolBombList[i].poolID);
-            }
-            break;
-
-          case 2:
-            if (this.poolBombList[i].poolX + 1 < this.poolCount &&
-              this.poolBombList[i].poolY - 1 >= 0 &&
-              this.fieldBombNeighboorID.indexOf(this.poolBombList[i].poolID) === -1) {
-              this.fieldBombNeighboorID.push(this.poolBombList[i].poolID);
-            }
-            break;
-
-          case 3:
-            if (this.poolBombList[i].poolX + 1 < this.poolCount &&
-              this.poolBombList[i].poolY + 1 < this.poolCount &&
-              this.fieldBombNeighboorID.indexOf(this.poolBombList[i].poolID) === -1) {
-              this.fieldBombNeighboorID.push(this.poolBombList[i].poolID);
-            }
-            break;
-        }
+  setZerosToEveryField() {
+    for (let i = 0, iMax = this.fieldList.length; i < iMax; i++) {
+      if (!this.fieldList[i].isBomb) {
+        this.fieldList[i].touchesBombCount = 0;
       }
     }
   }
 
+
   createInfoBoxes() {
-    for (let i = 0, iMax = this.poolBombList.length; i < iMax; i++) {
-      let bombNeighboorCounter = 0;
-      for (let j = 0; j < 4; j++) {
-        switch (j) {
-          case 0:
-            const bombFieldNeighboorX0 = this.poolBombList[i].poolX - 1;
-            const bombFieldNeighboorY0 = this.poolBombList[i].poolY - 1;
-            if (this.checkIfHasBomb(this.findFieldWithXY(bombFieldNeighboorX0, bombFieldNeighboorY0))) {
-              bombNeighboorCounter++;
-            }
-            break;
-
-          case 1:
-            const bombFieldNeighboorX1 = this.poolBombList[i].poolX - 1;
-            const bombFieldNeighboorY1 = this.poolBombList[i].poolY - 1;
-            if (this.checkIfHasBomb(this.findFieldWithXY(bombFieldNeighboorX1, bombFieldNeighboorY1))) {
-              bombNeighboorCounter++;
-            }
-            break;
-
-          case 2:
-            const bombFieldNeighboorX2 = this.poolBombList[i].poolX - 1;
-            const bombFieldNeighboorY2 = this.poolBombList[i].poolY - 1;
-            if (this.checkIfHasBomb(this.findFieldWithXY(bombFieldNeighboorX2, bombFieldNeighboorY2))) {
-              bombNeighboorCounter++;
-            }
-            break;
-
-          case 3:
-            const bombFieldNeighboorX3 = this.poolBombList[i].poolX - 1;
-            const bombFieldNeighboorY3 = this.poolBombList[i].poolY - 1;
-            if (this.checkIfHasBomb(this.findFieldWithXY(bombFieldNeighboorX3, bombFieldNeighboorY3))) {
-              bombNeighboorCounter++;
-            }
-            break;
+    for (let i = 0, iMax = this.fieldList.length; i < iMax; i++) {
+      let bombToucherCounter = 0;
+      if (this.fieldList[i].poolX - 1 >= 0 &&
+        this.fieldList[i].poolY - 1 >= 0) {
+        const neighbor0X = this.findFieldWithXY(this.fieldList[i].poolX - 1, this.fieldList[i].poolY - 1);
+        if (neighbor0X && neighbor0X.isBomb) {
+          bombToucherCounter++;
         }
       }
+
+      if (this.fieldList[i].poolX + 1 < this.poolCount &&
+        this.fieldList[i].poolY - 1 >= 0) {
+        const neighbor0X = this.findFieldWithXY(this.fieldList[i].poolX + 1, this.fieldList[i].poolY - 1);
+        if (neighbor0X && neighbor0X.isBomb) {
+          bombToucherCounter++;
+        }
+      }
+
+      if (this.fieldList[i].poolX - 1 >= 0 &&
+        this.fieldList[i].poolY + 1 < this.poolCount) {
+        const neighbor0X = this.findFieldWithXY(this.fieldList[i].poolX - 1, this.fieldList[i].poolY + 1);
+        if (neighbor0X && neighbor0X.isBomb) {
+          bombToucherCounter++;
+        }
+      }
+
+      if (this.fieldList[i].poolX + 1 < this.poolCount &&
+        this.fieldList[i].poolY + 1 < this.poolCount) {
+        const neighbor0X = this.findFieldWithXY(this.fieldList[i].poolX + 1, this.fieldList[i].poolY + 1);
+        if (neighbor0X && neighbor0X.isBomb) {
+          bombToucherCounter++;
+        }
+      }
+
+      if (this.fieldList[i].poolX + 1 < this.poolCount) {
+        const neighbor0X = this.findFieldWithXY(this.fieldList[i].poolX + 1, this.fieldList[i].poolY);
+        if (neighbor0X && neighbor0X.isBomb) {
+          bombToucherCounter++;
+        }
+      }
+
+      if (this.fieldList[i].poolX - 1 >= 0) {
+        const neighbor0X = this.findFieldWithXY(this.fieldList[i].poolX - 1, this.fieldList[i].poolY);
+        if (neighbor0X && neighbor0X.isBomb) {
+          bombToucherCounter++;
+        }
+      }
+
+      if (this.fieldList[i].poolY < this.poolCount) {
+        const neighbor0X = this.findFieldWithXY(this.fieldList[i].poolX, this.fieldList[i].poolY + 1);
+        if (neighbor0X && neighbor0X.isBomb) {
+          bombToucherCounter++;
+        }
+      }
+
+      if (this.fieldList[i].poolY >= 0) {
+        const neighbor0X = this.findFieldWithXY(this.fieldList[i].poolX, this.fieldList[i].poolY - 1);
+        if (neighbor0X && neighbor0X.isBomb) {
+          bombToucherCounter++;
+        }
+      }
+      if (bombToucherCounter > 0) {
+        this.fieldList[i].isInfo = true;
+      }
+      this.fieldList[i].touchesBombCount = bombToucherCounter;
     }
-    return true;
   }
 
   findFieldWithXY(x: number, y: number) {
-    for (let i = 0, iMax = this.fieldList.length * this.fieldList.length; i < iMax; i++) {
-      if (this.fieldList[i].poolX === x && this.fieldList[i].poolY === y) {
+    for (let i = 0, iMax = this.fieldList.length; i < iMax; i++) {
+      if (this.fieldList[i] && this.fieldList[i].poolX === x && this.fieldList[i].poolY === y) {
         return this.fieldList[i];
       }
     }
