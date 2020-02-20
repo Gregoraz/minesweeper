@@ -6,6 +6,14 @@
           [poolID]="field.poolID"
           [isInfo]="field.isInfo"
           [touchesBombCount]="field.touchesBombCount"
+          [isGameOver]="isGameOver"
+          [isReadyToExpand]="field.isExpanded"
+          (exposedField)="exposedFieldEvent($event)"
 >
 </app-pool>
+</div>
+<div *ngIf="this.isGameOver">
+<br><br>
+<h1>ALLAHU AKBAR</h1>
+<h2>Bomba zostala wyjebana</h2>
 </div>

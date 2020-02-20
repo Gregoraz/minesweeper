@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, EventEmitter, Output, OnChanges, SimpleChange} from '@angular/core';
 import {style} from '@angular/animations';
 
 @Component({
@@ -7,11 +7,14 @@ import {style} from '@angular/animations';
   styleUrls: ['./field.component.sass']
 })
 
-export class FieldComponent implements OnInit {
+export class FieldComponent implements OnInit, OnChanges {
   isClickable = true;
   isMarkedAsBomb = false;
   isExpanded = false;
   isBombExpanded = false;
+  comesFromClick: boolean;
+
+  @Output() exposedField = new EventEmitter<FieldComponent>();
 
   @Input() isBomb: boolean;
   @Input() poolX: number;
@@ -20,9 +23,20 @@ export class FieldComponent implements OnInit {
   @Input() isInfo: boolean;
   @Input() neighbors: number[];
   @Input() touchesBombCount: number;
+  @Input() isGameOver: boolean;
+
+  @Input() isReadyToExpand: boolean;
+  ngOnChanges() {
+    console.log('THERE IS A CHANGE');
+
+    if (this.isReadyToExpand) {
+      this.expandMe();
+    }
+  }
 
   constructor() {
   }
+
 
   setIsBomb() {
     this.isBomb = true;
@@ -30,6 +44,7 @@ export class FieldComponent implements OnInit {
 
   ngOnInit() {
   }
+
 
   expandMe() {
     this.isExpanded = !this.isExpanded;
@@ -41,6 +56,8 @@ export class FieldComponent implements OnInit {
   onFieldClick(event: any) {
     this.expandMe();
     this.isClickable = false;
+    this.comesFromClick = true;
+    this.exposedField.emit(this);
   }
 
   onRightClick(event: any) {

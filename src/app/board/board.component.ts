@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FieldComponent} from '../field/field.component';
+import has = Reflect.has;
 
 @Component({
   selector: 'app-board',
@@ -10,10 +11,8 @@ export class BoardComponent implements OnInit {
   fieldList: FieldComponent[] = [];
   bombCount = 10;
   poolBombList: FieldComponent[] = [];
-  fieldBombNeighbor: FieldComponent[] = [];
   private allBombsPlanted = false;
   isGameOver = false;
-
   @Input() poolCount: number;
 
   constructor() {
@@ -29,6 +28,104 @@ export class BoardComponent implements OnInit {
     console.log(this);
   }
 
+
+  exposedFieldEvent(field: FieldComponent) {
+    if (this.checkIfHasBomb(field)) {
+      if (field.comesFromClick) {
+        this.isGameOver = true;
+      }
+    } else {
+      this.exposeNeighbors(field);
+    }
+  }
+
+  exposeNeighbors(exposedNeighbor: FieldComponent) {
+    let isBomb = 0;
+    for (let i = 0, iMax = 81; i < iMax; i++) {
+      console.log(this);
+
+      if (this.fieldList[exposedNeighbor.poolID].poolX - 1 >= 0 &&
+        this.fieldList[exposedNeighbor.poolID].poolY - 1 >= 0) {
+        const neighbor0X = this.findFieldWithXY(this.fieldList[exposedNeighbor.poolID].poolX - 1, this.fieldList[exposedNeighbor.poolID].poolY - 1);
+        if (neighbor0X && !neighbor0X.isBomb) {
+          this.fieldList[neighbor0X.poolID].isReadyToExpand = true;
+        } else {
+          isBomb++;
+        }
+      }
+
+      if (this.fieldList[exposedNeighbor.poolID].poolX + 1 < this.poolCount &&
+        this.fieldList[exposedNeighbor.poolID].poolY - 1 >= 0) {
+        const neighbor0X = this.findFieldWithXY(this.fieldList[exposedNeighbor.poolID].poolX + 1, this.fieldList[exposedNeighbor.poolID].poolY - 1);
+        if (neighbor0X && !neighbor0X.isBomb) {
+          this.fieldList[neighbor0X.poolID].isReadyToExpand = true;
+        } else {
+          isBomb++;
+        }
+      }
+
+      if (this.fieldList[exposedNeighbor.poolID].poolX - 1 >= 0 &&
+        this.fieldList[exposedNeighbor.poolID].poolY + 1 < this.poolCount) {
+        const neighbor0X = this.findFieldWithXY(this.fieldList[exposedNeighbor.poolID].poolX - 1, this.fieldList[exposedNeighbor.poolID].poolY + 1);
+        if (neighbor0X && !neighbor0X.isBomb) {
+          this.fieldList[neighbor0X.poolID].isReadyToExpand = true;
+        } else {
+          isBomb++;
+        }
+      }
+
+      if (this.fieldList[exposedNeighbor.poolID].poolX + 1 < this.poolCount &&
+        this.fieldList[exposedNeighbor.poolID].poolY + 1 < this.poolCount) {
+        const neighbor0X = this.findFieldWithXY(this.fieldList[exposedNeighbor.poolID].poolX + 1, this.fieldList[exposedNeighbor.poolID].poolY + 1);
+        if (neighbor0X && !neighbor0X.isBomb) {
+          this.fieldList[neighbor0X.poolID].isReadyToExpand = true;
+        } else {
+          isBomb++;
+        }
+      }
+
+      if (this.fieldList[exposedNeighbor.poolID].poolX + 1 < this.poolCount) {
+        const neighbor0X = this.findFieldWithXY(this.fieldList[exposedNeighbor.poolID].poolX + 1, this.fieldList[exposedNeighbor.poolID].poolY);
+        if (neighbor0X && !neighbor0X.isBomb) {
+          this.fieldList[neighbor0X.poolID].isReadyToExpand = true;
+        } else {
+          isBomb++;
+        }
+      }
+
+      if (this.fieldList[exposedNeighbor.poolID].poolX - 1 >= 0) {
+        const neighbor0X = this.findFieldWithXY(this.fieldList[exposedNeighbor.poolID].poolX - 1, this.fieldList[exposedNeighbor.poolID].poolY);
+        if (neighbor0X && !neighbor0X.isBomb) {
+          this.fieldList[neighbor0X.poolID].isReadyToExpand = true;
+        } else {
+          isBomb++;
+        }
+      }
+
+      if (this.fieldList[exposedNeighbor.poolID].poolY < this.poolCount) {
+        const neighbor0X = this.findFieldWithXY(this.fieldList[exposedNeighbor.poolID].poolX, this.fieldList[exposedNeighbor.poolID].poolY + 1);
+        if (neighbor0X && !neighbor0X.isBomb) {
+          this.fieldList[neighbor0X.poolID].isReadyToExpand = true;
+        } else {
+          isBomb++;
+        }
+      }
+
+      if (this.fieldList[exposedNeighbor.poolID].poolY >= 0) {
+        const neighbor0X = this.findFieldWithXY(this.fieldList[exposedNeighbor.poolID].poolX, this.fieldList[exposedNeighbor.poolID].poolY - 1);
+        if (neighbor0X && !neighbor0X.isBomb) {
+          this.fieldList[neighbor0X.poolID].isReadyToExpand = true;
+        } else {
+          isBomb++;
+        }
+      }
+      if (isBomb === 8) {
+        this.fieldList[exposedNeighbor.poolID].isInfo = true;
+      }
+
+    }
+  }
+
   createBoardFromPools() {
     let idIterator = 0;
     for (let j = 0; j < this.poolCount; j++) {
@@ -38,6 +135,7 @@ export class BoardComponent implements OnInit {
         pool.poolY = j;
         pool.poolID = idIterator;
         idIterator++;
+        pool.isReadyToExpand = false;
         this.fieldList.push(pool);
       }
     }
