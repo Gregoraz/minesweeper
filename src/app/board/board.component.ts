@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FieldComponent} from '../field/field.component';
-import has = Reflect.has;
 
 @Component({
   selector: 'app-board',
@@ -13,7 +12,42 @@ export class BoardComponent implements OnInit {
   poolBombList: FieldComponent[] = [];
   private allBombsPlanted = false;
   isGameOver = false;
+  isReadyToReset = false;
   @Input() poolCount: number;
+  directions = [
+    {
+      x: -1,
+      y: -1
+    },
+    {
+      x: -1,
+      y: 1
+    },
+    {
+      x: 1,
+      y: -1
+    },
+    {
+      x: 1,
+      y: 1
+    },
+    {
+      x: -1,
+      y: 0
+    },
+    {
+      x: 1,
+      y: 0
+    },
+    {
+      x: 0,
+      y: -1
+    },
+    {
+      x: 0,
+      y: 1
+    },
+  ];
 
   constructor() {
   }
@@ -28,6 +62,25 @@ export class BoardComponent implements OnInit {
     console.log(this);
   }
 
+  resetGame($event) {
+    if (!this.isReadyToReset) {
+      this.isReadyToReset = true;
+    } else {
+      this.isReadyToReset = false;
+      $event.preventDefault();
+      this.fieldList = [];
+      this.poolBombList = [];
+      this.allBombsPlanted = false;
+      this.createBoardFromPools();
+      while (!this.allBombsPlanted) {
+        this.plantTheBombs();
+      }
+      this.setZerosToEveryField();
+      this.createInfoBoxes();
+      this.isGameOver = false;
+    }
+  }
+
 
   exposedFieldEvent(field: FieldComponent) {
     if (this.checkIfHasBomb(field)) {
@@ -40,90 +93,43 @@ export class BoardComponent implements OnInit {
   }
 
   exposeNeighbors(exposedNeighbor: FieldComponent) {
-    let isBomb = 0;
-    for (let i = 0, iMax = 81; i < iMax; i++) {
-      console.log(this);
+    let neighborIsBomb = 0;
+    let neighborIsInfo = 0;
 
-      if (this.fieldList[exposedNeighbor.poolID].poolX - 1 >= 0 &&
-        this.fieldList[exposedNeighbor.poolID].poolY - 1 >= 0) {
-        const neighbor0X = this.findFieldWithXY(this.fieldList[exposedNeighbor.poolID].poolX - 1, this.fieldList[exposedNeighbor.poolID].poolY - 1);
-        if (neighbor0X && !neighbor0X.isBomb) {
+    const goThroughDirections = (j) => {
+      console.log(j);
+      if (this.fieldList[exposedNeighbor.poolID].poolX + this.directions[j].x >= 0 &&
+        this.fieldList[exposedNeighbor.poolID].poolY + this.directions[j].y >= 0 &&
+        this.fieldList[exposedNeighbor.poolID].poolX + this.directions[j].x < this.poolCount &&
+        this.fieldList[exposedNeighbor.poolID].poolY + this.directions[j].y < this.poolCount
+      ) {
+        let neighbor0X = this.findFieldWithXY(this.fieldList[exposedNeighbor.poolID].poolX + this.directions[j].x,
+          this.fieldList[exposedNeighbor.poolID].poolY + this.directions[j].y);
+        if (neighbor0X && !neighbor0X.isBomb && !neighbor0X.isExpanded) {
+          this.fieldList[neighbor0X.poolID].expandMe();
           this.fieldList[neighbor0X.poolID].isReadyToExpand = true;
+          neighbor0X = this.findFieldWithXY(this.fieldList[neighbor0X.poolID].poolX, this.fieldList[neighbor0X.poolID].poolY);
+
+          if (!neighbor0X.isInfo) {
+            console.log(neighbor0X.touchesBombCount);
+            if (neighbor0X.touchesBombCount === 0) {
+              setTimeout(() => {
+                this.exposeNeighbors(neighbor0X);
+              }, 5);
+            }
+            neighborIsInfo++;
+          }
         } else {
-          isBomb++;
+          neighborIsBomb++;
         }
       }
-
-      if (this.fieldList[exposedNeighbor.poolID].poolX + 1 < this.poolCount &&
-        this.fieldList[exposedNeighbor.poolID].poolY - 1 >= 0) {
-        const neighbor0X = this.findFieldWithXY(this.fieldList[exposedNeighbor.poolID].poolX + 1, this.fieldList[exposedNeighbor.poolID].poolY - 1);
-        if (neighbor0X && !neighbor0X.isBomb) {
-          this.fieldList[neighbor0X.poolID].isReadyToExpand = true;
-        } else {
-          isBomb++;
-        }
+      if (j > 0) {
+        setTimeout(() => {
+          goThroughDirections(j - 1);
+        }, 5);
       }
-
-      if (this.fieldList[exposedNeighbor.poolID].poolX - 1 >= 0 &&
-        this.fieldList[exposedNeighbor.poolID].poolY + 1 < this.poolCount) {
-        const neighbor0X = this.findFieldWithXY(this.fieldList[exposedNeighbor.poolID].poolX - 1, this.fieldList[exposedNeighbor.poolID].poolY + 1);
-        if (neighbor0X && !neighbor0X.isBomb) {
-          this.fieldList[neighbor0X.poolID].isReadyToExpand = true;
-        } else {
-          isBomb++;
-        }
-      }
-
-      if (this.fieldList[exposedNeighbor.poolID].poolX + 1 < this.poolCount &&
-        this.fieldList[exposedNeighbor.poolID].poolY + 1 < this.poolCount) {
-        const neighbor0X = this.findFieldWithXY(this.fieldList[exposedNeighbor.poolID].poolX + 1, this.fieldList[exposedNeighbor.poolID].poolY + 1);
-        if (neighbor0X && !neighbor0X.isBomb) {
-          this.fieldList[neighbor0X.poolID].isReadyToExpand = true;
-        } else {
-          isBomb++;
-        }
-      }
-
-      if (this.fieldList[exposedNeighbor.poolID].poolX + 1 < this.poolCount) {
-        const neighbor0X = this.findFieldWithXY(this.fieldList[exposedNeighbor.poolID].poolX + 1, this.fieldList[exposedNeighbor.poolID].poolY);
-        if (neighbor0X && !neighbor0X.isBomb) {
-          this.fieldList[neighbor0X.poolID].isReadyToExpand = true;
-        } else {
-          isBomb++;
-        }
-      }
-
-      if (this.fieldList[exposedNeighbor.poolID].poolX - 1 >= 0) {
-        const neighbor0X = this.findFieldWithXY(this.fieldList[exposedNeighbor.poolID].poolX - 1, this.fieldList[exposedNeighbor.poolID].poolY);
-        if (neighbor0X && !neighbor0X.isBomb) {
-          this.fieldList[neighbor0X.poolID].isReadyToExpand = true;
-        } else {
-          isBomb++;
-        }
-      }
-
-      if (this.fieldList[exposedNeighbor.poolID].poolY < this.poolCount) {
-        const neighbor0X = this.findFieldWithXY(this.fieldList[exposedNeighbor.poolID].poolX, this.fieldList[exposedNeighbor.poolID].poolY + 1);
-        if (neighbor0X && !neighbor0X.isBomb) {
-          this.fieldList[neighbor0X.poolID].isReadyToExpand = true;
-        } else {
-          isBomb++;
-        }
-      }
-
-      if (this.fieldList[exposedNeighbor.poolID].poolY >= 0) {
-        const neighbor0X = this.findFieldWithXY(this.fieldList[exposedNeighbor.poolID].poolX, this.fieldList[exposedNeighbor.poolID].poolY - 1);
-        if (neighbor0X && !neighbor0X.isBomb) {
-          this.fieldList[neighbor0X.poolID].isReadyToExpand = true;
-        } else {
-          isBomb++;
-        }
-      }
-      if (isBomb === 8) {
-        this.fieldList[exposedNeighbor.poolID].isInfo = true;
-      }
-
-    }
+    };
+    goThroughDirections(this.directions.length - 1);
   }
 
   createBoardFromPools() {

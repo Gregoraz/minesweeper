@@ -1,4 +1,7 @@
-<div [className]="'board'">
+<div [className]="'board'"
+     (click)="isReadyToReset || isGameOver ? resetGame($event) : false"
+     (contextmenu)="isReadyToReset || isGameOver ? resetGame($event) : false"
+>
 <app-pool *ngFor="let field of fieldList"
           [isBomb]="field.isBomb"
           [poolX]="field.poolX"
@@ -7,7 +10,8 @@
           [isInfo]="field.isInfo"
           [touchesBombCount]="field.touchesBombCount"
           [isGameOver]="isGameOver"
-          [isReadyToExpand]="field.isExpanded"
+          [isReadyToExpand]="field.isReadyToExpand"
+          [isProcessing]="field.isProcessing"
           (exposedField)="exposedFieldEvent($event)"
 >
 </app-pool>

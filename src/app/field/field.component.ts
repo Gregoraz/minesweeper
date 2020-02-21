@@ -24,11 +24,10 @@ export class FieldComponent implements OnInit, OnChanges {
   @Input() neighbors: number[];
   @Input() touchesBombCount: number;
   @Input() isGameOver: boolean;
+  @Input() isProcessing: boolean;
 
   @Input() isReadyToExpand: boolean;
   ngOnChanges() {
-    console.log('THERE IS A CHANGE');
-
     if (this.isReadyToExpand) {
       this.expandMe();
     }
@@ -47,9 +46,10 @@ export class FieldComponent implements OnInit, OnChanges {
 
 
   expandMe() {
-    this.isExpanded = !this.isExpanded;
+    this.isExpanded = true;
+    this.isClickable = false;
     if (this.isBomb && this.isExpanded) {
-      this.isBombExpanded = !this.isBombExpanded;
+      this.isBombExpanded = true;
     }
   }
 
