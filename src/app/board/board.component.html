@@ -16,7 +16,13 @@
 >
 </app-pool>
 </div>
-<div *ngIf="this.isGameOver">
+<div class="resources">
+  <div class="resources-child mine"></div>
+  <div class="resources-child red-mine"></div>
+  <div class="resources-child flag"></div>
+  <div class="resources-child quote"></div>
+</div>
+<div [className]="'game-over'" *ngIf="this.isGameOver">
 <br><br>
 <h1>ALLAHU AKBAR</h1>
 <h2>Bomba zostala wyjebana</h2>

@@ -113,9 +113,10 @@ export class BoardComponent implements OnInit {
           if (!neighbor0X.isInfo) {
             console.log(neighbor0X.touchesBombCount);
             if (neighbor0X.touchesBombCount === 0) {
-              setTimeout(() => {
-                this.exposeNeighbors(neighbor0X);
-              }, 5);
+              this.exposeNeighbors(neighbor0X);
+              // setTimeout(() => {
+              //   this.exposeNeighbors(neighbor0X);
+              // }, 15);
             }
             neighborIsInfo++;
           }
@@ -124,9 +125,11 @@ export class BoardComponent implements OnInit {
         }
       }
       if (j > 0) {
-        setTimeout(() => {
-          goThroughDirections(j - 1);
-        }, 5);
+        goThroughDirections(j - 1);
+
+        // setTimeout(() => {
+        //   goThroughDirections(j - 1);
+        // }, 15);
       }
     };
     goThroughDirections(this.directions.length - 1);
@@ -159,63 +162,17 @@ export class BoardComponent implements OnInit {
   createInfoBoxes() {
     for (let i = 0, iMax = this.fieldList.length; i < iMax; i++) {
       let bombToucherCounter = 0;
-      if (this.fieldList[i].poolX - 1 >= 0 &&
-        this.fieldList[i].poolY - 1 >= 0) {
-        const neighbor0X = this.findFieldWithXY(this.fieldList[i].poolX - 1, this.fieldList[i].poolY - 1);
-        if (neighbor0X && neighbor0X.isBomb) {
-          bombToucherCounter++;
-        }
-      }
-
-      if (this.fieldList[i].poolX + 1 < this.poolCount &&
-        this.fieldList[i].poolY - 1 >= 0) {
-        const neighbor0X = this.findFieldWithXY(this.fieldList[i].poolX + 1, this.fieldList[i].poolY - 1);
-        if (neighbor0X && neighbor0X.isBomb) {
-          bombToucherCounter++;
-        }
-      }
-
-      if (this.fieldList[i].poolX - 1 >= 0 &&
-        this.fieldList[i].poolY + 1 < this.poolCount) {
-        const neighbor0X = this.findFieldWithXY(this.fieldList[i].poolX - 1, this.fieldList[i].poolY + 1);
-        if (neighbor0X && neighbor0X.isBomb) {
-          bombToucherCounter++;
-        }
-      }
-
-      if (this.fieldList[i].poolX + 1 < this.poolCount &&
-        this.fieldList[i].poolY + 1 < this.poolCount) {
-        const neighbor0X = this.findFieldWithXY(this.fieldList[i].poolX + 1, this.fieldList[i].poolY + 1);
-        if (neighbor0X && neighbor0X.isBomb) {
-          bombToucherCounter++;
-        }
-      }
-
-      if (this.fieldList[i].poolX + 1 < this.poolCount) {
-        const neighbor0X = this.findFieldWithXY(this.fieldList[i].poolX + 1, this.fieldList[i].poolY);
-        if (neighbor0X && neighbor0X.isBomb) {
-          bombToucherCounter++;
-        }
-      }
-
-      if (this.fieldList[i].poolX - 1 >= 0) {
-        const neighbor0X = this.findFieldWithXY(this.fieldList[i].poolX - 1, this.fieldList[i].poolY);
-        if (neighbor0X && neighbor0X.isBomb) {
-          bombToucherCounter++;
-        }
-      }
-
-      if (this.fieldList[i].poolY < this.poolCount) {
-        const neighbor0X = this.findFieldWithXY(this.fieldList[i].poolX, this.fieldList[i].poolY + 1);
-        if (neighbor0X && neighbor0X.isBomb) {
-          bombToucherCounter++;
-        }
-      }
-
-      if (this.fieldList[i].poolY >= 0) {
-        const neighbor0X = this.findFieldWithXY(this.fieldList[i].poolX, this.fieldList[i].poolY - 1);
-        if (neighbor0X && neighbor0X.isBomb) {
-          bombToucherCounter++;
+      for (let j = 0, jMax = this.directions.length; j < jMax; j++) {
+        if (this.fieldList[j].poolX + this.directions[j].x >= 0           &&
+          this.fieldList[i].poolY + this.directions[j].y >= 0             &&
+          this.fieldList[i].poolY + this.directions[j].x < this.poolCount &&
+          this.fieldList[i].poolY + this.directions[j].y < this.poolCount
+        ) {
+          const neighbor0X = this.findFieldWithXY(this.fieldList[i].poolX + this.directions[j].x,
+            this.fieldList[i].poolY + this.directions[j].y);
+          if (neighbor0X && neighbor0X.isBomb) {
+            bombToucherCounter++;
+          }
         }
       }
       if (bombToucherCounter > 0) {
