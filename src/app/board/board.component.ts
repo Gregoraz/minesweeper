@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FieldComponent} from '../field/field.component';
 
 @Component({
@@ -12,8 +12,16 @@ export class BoardComponent implements OnInit {
   poolBombList: FieldComponent[] = [];
   private allBombsPlanted = false;
   isGameOver = false;
+  isWinner = false;
   isReadyToReset = false;
+  isMarkedAsBombCounter: number;
+  allFieldMarked = false;
+
   @Input() poolCount: number;
+  @Output() bombCountOutput = new EventEmitter<number>();
+  @Output() isGamePlay = new EventEmitter<boolean>();
+  @Output() gameHasStarted = new EventEmitter<boolean>();
+
   directions = [
     {
       x: -1,
@@ -49,17 +57,12 @@ export class BoardComponent implements OnInit {
     },
   ];
 
-  constructor() {
-  }
-
   ngOnInit() {
+    this.isMarkedAsBombCounter = 0;
     this.createBoardFromPools();
-    while (!this.allBombsPlanted) {
-      this.plantTheBombs();
-    }
+    this.plantTheBombs();
     this.setZerosToEveryField();
     this.createInfoBoxes();
-    console.log(this);
   }
 
   resetGame($event) {
@@ -72,15 +75,63 @@ export class BoardComponent implements OnInit {
       this.poolBombList = [];
       this.allBombsPlanted = false;
       this.createBoardFromPools();
-      while (!this.allBombsPlanted) {
-        this.plantTheBombs();
-      }
+      this.plantTheBombs();
       this.setZerosToEveryField();
       this.createInfoBoxes();
+      this.isWinner = false;
       this.isGameOver = false;
+      this.isMarkedAsBombCounter = 0;
+      this.allFieldMarked = false;
+      this.bombCountOutput.emit(this.bombCount);
     }
   }
 
+  gameHasStartedEvent($event) {
+    this.gameHasStarted.emit($event);
+  }
+
+  countExpandedFields() {
+    let expandedCounter = 0;
+    for (let i = 0, iMax = this.fieldList.length; i < iMax; i++) {
+      if (this.fieldList[i].isExpanded) {
+        expandedCounter++;
+      }
+    }
+    return expandedCounter;
+  }
+
+  increaseMarkedAsBomb(triggerChanges: boolean): void {
+    this.isMarkedAsBombCounter++;
+    if (triggerChanges) {
+      this.bombCountOutput.emit(this.bombCount - this.isMarkedAsBombCounter);
+    }
+  }
+
+  decreaseMarkedAsBomb(triggerChanges: boolean): void {
+    this.isMarkedAsBombCounter--;
+    if (triggerChanges) {
+      this.bombCountOutput.emit(this.bombCount - this.isMarkedAsBombCounter);
+    }
+  }
+
+
+  isFlaggedEvent(field: FieldComponent) {
+    if (field.isMarkedAsBomb) {
+      this.fieldList[field.poolID].isMarkedAsBomb = true;
+      this.increaseMarkedAsBomb(true);
+      if (this.isMarkedAsBombCounter === this.bombCount) {
+        this.allFieldMarked = true;
+        const expandedFieldCount = this.countExpandedFields();
+        if (expandedFieldCount === this.fieldList.length - this.bombCount) {
+          this.isWinner = true;
+        }
+      }
+    } else {
+      this.fieldList[field.poolID].isMarkedAsBomb = false;
+      this.decreaseMarkedAsBomb(true);
+      this.allFieldMarked = false;
+    }
+  }
 
   exposedFieldEvent(field: FieldComponent) {
     if (this.checkIfHasBomb(field)) {
@@ -90,6 +141,13 @@ export class BoardComponent implements OnInit {
     } else {
       this.exposeNeighbors(field);
     }
+    if (field.isExpanded) {
+      this.fieldList[field.poolID].expandMe();
+      const expandedFieldCount = this.countExpandedFields();
+      if (expandedFieldCount === this.fieldList.length - this.bombCount && this.allFieldMarked) {
+        this.isWinner = true;
+      }
+    }
   }
 
   exposeNeighbors(exposedNeighbor: FieldComponent) {
@@ -97,26 +155,26 @@ export class BoardComponent implements OnInit {
     let neighborIsInfo = 0;
 
     const goThroughDirections = (j) => {
-      console.log(j);
       if (this.fieldList[exposedNeighbor.poolID].poolX + this.directions[j].x >= 0 &&
         this.fieldList[exposedNeighbor.poolID].poolY + this.directions[j].y >= 0 &&
-        this.fieldList[exposedNeighbor.poolID].poolX + this.directions[j].x < this.poolCount &&
-        this.fieldList[exposedNeighbor.poolID].poolY + this.directions[j].y < this.poolCount
+        this.fieldList[exposedNeighbor.poolID].poolX + this.directions[j].x <= this.poolCount &&
+        this.fieldList[exposedNeighbor.poolID].poolY + this.directions[j].y <= this.poolCount
       ) {
         let neighbor0X = this.findFieldWithXY(this.fieldList[exposedNeighbor.poolID].poolX + this.directions[j].x,
           this.fieldList[exposedNeighbor.poolID].poolY + this.directions[j].y);
-        if (neighbor0X && !neighbor0X.isBomb && !neighbor0X.isExpanded) {
+        if (neighbor0X && !neighbor0X.isBomb && !neighbor0X.isExpanded && !neighbor0X.isMarkedAsBomb) {
           this.fieldList[neighbor0X.poolID].expandMe();
           this.fieldList[neighbor0X.poolID].isReadyToExpand = true;
+          const expandedFieldCount = this.countExpandedFields();
+          if (expandedFieldCount === this.fieldList.length - this.bombCount && this.allFieldMarked) {
+            this.isWinner = true;
+          }
+
           neighbor0X = this.findFieldWithXY(this.fieldList[neighbor0X.poolID].poolX, this.fieldList[neighbor0X.poolID].poolY);
 
           if (!neighbor0X.isInfo) {
-            console.log(neighbor0X.touchesBombCount);
             if (neighbor0X.touchesBombCount === 0) {
               this.exposeNeighbors(neighbor0X);
-              // setTimeout(() => {
-              //   this.exposeNeighbors(neighbor0X);
-              // }, 15);
             }
             neighborIsInfo++;
           }
@@ -126,10 +184,6 @@ export class BoardComponent implements OnInit {
       }
       if (j > 0) {
         goThroughDirections(j - 1);
-
-        // setTimeout(() => {
-        //   goThroughDirections(j - 1);
-        // }, 15);
       }
     };
     goThroughDirections(this.directions.length - 1);
@@ -163,13 +217,14 @@ export class BoardComponent implements OnInit {
     for (let i = 0, iMax = this.fieldList.length; i < iMax; i++) {
       let bombToucherCounter = 0;
       for (let j = 0, jMax = this.directions.length; j < jMax; j++) {
-        if (this.fieldList[j].poolX + this.directions[j].x >= 0           &&
-          this.fieldList[i].poolY + this.directions[j].y >= 0             &&
-          this.fieldList[i].poolY + this.directions[j].x < this.poolCount &&
-          this.fieldList[i].poolY + this.directions[j].y < this.poolCount
+        if (this.fieldList[i].poolX + this.directions[j].x >= 0 &&
+          this.fieldList[i].poolY + this.directions[j].y >= 0 &&
+          this.fieldList[i].poolY + this.directions[j].x <= this.poolCount &&
+          this.fieldList[i].poolY + this.directions[j].y <= this.poolCount
         ) {
           const neighbor0X = this.findFieldWithXY(this.fieldList[i].poolX + this.directions[j].x,
             this.fieldList[i].poolY + this.directions[j].y);
+
           if (neighbor0X && neighbor0X.isBomb) {
             bombToucherCounter++;
           }
@@ -193,14 +248,17 @@ export class BoardComponent implements OnInit {
 
   plantTheBombs() {
     const poolCount = this.fieldList.length - 1;
-    const poolToPlant = Math.floor((Math.random() * poolCount));
-    if (!this.checkIfHasBomb(poolToPlant)) {
-      this.poolBombList.push(this.fieldList[poolToPlant]);
-      this.fieldList[poolToPlant].setIsBomb();
+
+    for (let i = 0, iMax = this.bombCount; i < iMax;) {
+      const poolToPlantID = Math.floor((Math.random() * poolCount));
+      const foundPool = this.fieldList[poolToPlantID];
+      if (!this.checkIfHasBomb(foundPool)) {
+        this.poolBombList.push(this.fieldList[poolToPlantID]);
+        this.fieldList[poolToPlantID].setIsBomb();
+        i++;
+      }
     }
-    if (this.poolBombList.length === this.bombCount) {
-      this.allBombsPlanted = true;
-    }
+    this.allBombsPlanted = true;
   }
 
   checkIfHasBomb(poolToPlant): boolean {

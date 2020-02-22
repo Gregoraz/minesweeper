@@ -6,13 +6,17 @@ import { AppComponent } from './app.component';
 import { FieldComponent } from './field/field.component';
 import { BoardComponent } from './board/board.component';
 import { ResourcesComponent } from './resources/resources.component';
+import { TimecounterComponent } from './timecounter/timecounter.component';
+import { BombcounterComponent } from './bombcounter/bombcounter.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     FieldComponent,
     BoardComponent,
-    ResourcesComponent
+    ResourcesComponent,
+    TimecounterComponent,
+    BombcounterComponent
   ],
   imports: [
     BrowserModule,

@@ -1,10 +1,18 @@
 
 <div [className]="'content'" role="main">
-
-    <span>{{ title }}</span>
-
-  <router-outlet></router-outlet>
-
+<!--  <span>{{ title }}</span>-->
+  <app-board poolCount=9
+   (bombCountOutput)="this.updateBombCount($event)"
+   (gameHasStarted)="this.gameHasStarted($event)"
+  >
+  </app-board>
+  <app-timecounter></app-timecounter>
+  <app-bombcounter
+  [bombCount]="this.bombCount"
+  >
+  </app-bombcounter>
 </div>
 
-<app-board poolCount=9></app-board>
+
+<app-resources></app-resources>
+

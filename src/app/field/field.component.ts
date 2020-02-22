@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, EventEmitter, Output, OnChanges, SimpleChange} from '@angular/core';
+import {Component, Input, OnInit, EventEmitter, Output, OnChanges} from '@angular/core';
 import {style} from '@angular/animations';
 
 @Component({
@@ -15,6 +15,8 @@ export class FieldComponent implements OnInit, OnChanges {
   comesFromClick: boolean;
 
   @Output() exposedField = new EventEmitter<FieldComponent>();
+  @Output() isFlagged = new EventEmitter<FieldComponent>();
+  @Output() gameHasStarted = new EventEmitter<boolean>();
 
   @Input() isBomb: boolean;
   @Input() poolX: number;
@@ -24,12 +26,17 @@ export class FieldComponent implements OnInit, OnChanges {
   @Input() neighbors: number[];
   @Input() touchesBombCount: number;
   @Input() isGameOver: boolean;
-  @Input() isProcessing: boolean;
+  @Input() isWinner: boolean;
+  @Input() allFieldsMarked: boolean;
 
   @Input() isReadyToExpand: boolean;
+
   ngOnChanges() {
     if (this.isReadyToExpand) {
       this.expandMe();
+    }
+    if (this.isGameOver || this.isWinner) {
+      this.gameHasStarted.emit(false);
     }
   }
 
@@ -54,6 +61,9 @@ export class FieldComponent implements OnInit, OnChanges {
   }
 
   onFieldClick(event: any) {
+    if (!this.gameHasStarted) {
+      this.gameHasStarted.emit(true);
+    }
     this.expandMe();
     this.isClickable = false;
     this.comesFromClick = true;
@@ -62,7 +72,17 @@ export class FieldComponent implements OnInit, OnChanges {
 
   onRightClick(event: any) {
     event.preventDefault();
-    this.isMarkedAsBomb = !this.isMarkedAsBomb;
+    if (!this.gameHasStarted) {
+      this.gameHasStarted.emit(true);
+    }
+    if (!this.allFieldsMarked) {
+      this.isMarkedAsBomb = !this.isMarkedAsBomb;
+      this.isFlagged.emit(this);
+    } else {
+      if (this.isMarkedAsBomb) {
+        this.isMarkedAsBomb = false;
+        this.isFlagged.emit(this);
+      }
+    }
   }
-
 }

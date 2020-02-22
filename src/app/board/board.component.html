@@ -1,6 +1,6 @@
 <div [className]="'board'"
-     (click)="isReadyToReset || isGameOver ? resetGame($event) : false"
-     (contextmenu)="isReadyToReset || isGameOver ? resetGame($event) : false"
+     (click)="isReadyToReset || isGameOver || isWinner ? resetGame($event) : false"
+     (contextmenu)="isReadyToReset || isGameOver || isWinner ? resetGame($event) : false"
 >
 <app-pool *ngFor="let field of fieldList"
           [isBomb]="field.isBomb"
@@ -10,20 +10,24 @@
           [isInfo]="field.isInfo"
           [touchesBombCount]="field.touchesBombCount"
           [isGameOver]="isGameOver"
+          [isWinner]="isWinner"
           [isReadyToExpand]="field.isReadyToExpand"
-          [isProcessing]="field.isProcessing"
+          [allFieldsMarked]="allFieldMarked"
           (exposedField)="exposedFieldEvent($event)"
+          (isFlagged)="isFlaggedEvent($event)"
+          (gameHasStarted)="!this.gameHasStarted ? gameHasStartedEvent($event) : false"
 >
 </app-pool>
 </div>
-<div class="resources">
-  <div class="resources-child mine"></div>
-  <div class="resources-child red-mine"></div>
-  <div class="resources-child flag"></div>
-  <div class="resources-child quote"></div>
+<div [className]="'game-over'" *ngIf="this.isGameOver"
+     (click)="this.resetGame($event)"
+     (contextmenu)="this.resetGame($event)"
+>
+<h1>Game Over</h1>
+<h2>Let's try again?</h2>
 </div>
-<div [className]="'game-over'" *ngIf="this.isGameOver">
-<br><br>
-<h1>ALLAHU AKBAR</h1>
-<h2>Bomba zostala wyjebana</h2>
+
+<div [className]="'winner'" *ngIf="this.isWinner">
+  <h1>You have won</h1>
+  <h2>Let's try again?</h2>
 </div>
