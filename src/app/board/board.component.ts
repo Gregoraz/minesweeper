@@ -8,7 +8,6 @@ import {FieldComponent} from '../field/field.component';
 })
 export class BoardComponent implements OnInit {
   fieldList: FieldComponent[] = [];
-  bombCount = 10;
   poolBombList: FieldComponent[] = [];
   private allBombsPlanted = false;
   isGameOver = false;
@@ -16,8 +15,10 @@ export class BoardComponent implements OnInit {
   isReadyToReset = false;
   isMarkedAsBombCounter: number;
   allFieldMarked = false;
+  gameIsGoingOn = false;
 
   @Input() poolCount: number;
+  @Input() bombCount: number;
   @Output() bombCountOutput = new EventEmitter<number>();
   @Output() isGamePlay = new EventEmitter<boolean>();
   @Output() gameHasStarted = new EventEmitter<boolean>();
@@ -83,6 +84,7 @@ export class BoardComponent implements OnInit {
       this.isMarkedAsBombCounter = 0;
       this.allFieldMarked = false;
       this.bombCountOutput.emit(this.bombCount);
+      this.gameIsGoingOn = false;
     }
   }
 

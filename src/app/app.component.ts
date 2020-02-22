@@ -6,12 +6,14 @@ import {Component, OnInit} from '@angular/core';
   styleUrls: ['./app.component.sass']
 })
 
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
   title = 'Saper';
   bombCount: number;
+  gameIsRunning: boolean;
 
   ngOnInit() {
     this.bombCount = 10;
+    this.gameIsRunning = false;
   }
 
   updateBombCount($event) {
@@ -19,6 +21,7 @@ export class AppComponent implements OnInit{
   }
 
   gameHasStarted($event) {
-    console.log('game has started!');
+    console.log('halo');
+    this.gameIsRunning = $event;
   }
 }

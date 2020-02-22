@@ -61,9 +61,7 @@ export class FieldComponent implements OnInit, OnChanges {
   }
 
   onFieldClick(event: any) {
-    if (!this.gameHasStarted) {
-      this.gameHasStarted.emit(true);
-    }
+    this.gameHasStarted.emit(true);
     this.expandMe();
     this.isClickable = false;
     this.comesFromClick = true;
@@ -72,9 +70,7 @@ export class FieldComponent implements OnInit, OnChanges {
 
   onRightClick(event: any) {
     event.preventDefault();
-    if (!this.gameHasStarted) {
-      this.gameHasStarted.emit(true);
-    }
+    this.gameHasStarted.emit(true);
     if (!this.allFieldsMarked) {
       this.isMarkedAsBomb = !this.isMarkedAsBomb;
       this.isFlagged.emit(this);

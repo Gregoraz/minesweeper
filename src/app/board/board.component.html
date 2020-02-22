@@ -15,7 +15,7 @@
           [allFieldsMarked]="allFieldMarked"
           (exposedField)="exposedFieldEvent($event)"
           (isFlagged)="isFlaggedEvent($event)"
-          (gameHasStarted)="!this.gameHasStarted ? gameHasStartedEvent($event) : false"
+          (gameHasStarted)="this.gameHasStarted && !this.gameIsGoingOn ? gameHasStartedEvent($event) : gameHasStartedEvent(false)"
 >
 </app-pool>
 </div>

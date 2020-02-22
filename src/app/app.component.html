@@ -1,12 +1,17 @@
 
 <div [className]="'content'" role="main">
 <!--  <span>{{ title }}</span>-->
-  <app-board poolCount=9
+  <app-board
+    poolCount=9
+    bombCount=10
    (bombCountOutput)="this.updateBombCount($event)"
    (gameHasStarted)="this.gameHasStarted($event)"
+
   >
   </app-board>
-  <app-timecounter></app-timecounter>
+  <app-timecounter
+  [gameIsRunning]="this.gameIsRunning"
+  ></app-timecounter>
   <app-bombcounter
   [bombCount]="this.bombCount"
   >
