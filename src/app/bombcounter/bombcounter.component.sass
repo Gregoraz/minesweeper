@@ -1,0 +1,28 @@
+.bomb-counter
+  color: darkblue
+  background-color: lightblue
+  pointer-events: none
+  cursor: inherit
+  width: 100px
+  height: 50px
+  display: inline-block
+  float: right
+  .bomb-counter-value
+    font-size: 25px
+    position: relative
+    top: 25%
+    -webkit-transform: translateY(-25%)
+    -ms-transform: translateY(-25%)
+    transform: translateY(-25%)
+    -webkit-touch-callout: none
+    -webkit-user-select: none
+    -moz-user-select: none
+    -ms-user-select: none
+    user-select: none
+
+.bomb-icon
+  background-image: url("src/assets/img/mine.png")
+  width: 35px
+  height: 35px
+  background-size: cover
+  position: fixed
