@@ -24,6 +24,14 @@ export class TimecounterComponent implements OnInit, OnChanges {
     this.timeDisplay = '000000';
   }
 
+  getNumberWithLeading0 = (current, size) => {
+    let s = String(current);
+    while (s.length < (size || 2)) {
+      s = '0' + s;
+    }
+    return s;
+  };
+
   startTimer() {
     this.timeInterval = setInterval(this.updateTimeCounter, 1000);
   }
@@ -33,20 +41,14 @@ export class TimecounterComponent implements OnInit, OnChanges {
   }
 
   resetTimer() {
-    this.timeCounter = 1;
+    this.timeCounter = 0;
     this.timeDisplay = '000000';
   }
 
-  updateTimeCounter() {
+  updateTimeCounter = () => {
     this.timeCounter++;
-    if (this.timeDisplay === '000000') {
-      this.timeDisplay = '111111';
-    } else {
-      this.timeDisplay = '000000';
-    }
-    console.log(this.timeDisplay);
-    console.log(this.timeCounter);
-  }
+    this.timeDisplay = this.getNumberWithLeading0(this.timeCounter, 6);
+  };
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.gameIsRunning.currentValue) {
@@ -58,6 +60,4 @@ export class TimecounterComponent implements OnInit, OnChanges {
       console.log('Game is running, ', changes.gameIsRunning.currentValue);
     }
   }
-
-
 }
