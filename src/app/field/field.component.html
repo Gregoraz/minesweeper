@@ -3,7 +3,13 @@
      (contextmenu)="isClickable && !isGameOver && !isWinner ? onRightClick($event) : false"
      [ngClass]="{'is-selected': isExpanded, 'is-marked': isMarkedAsBomb, 'is-bomb': ((isBomb && isExpanded) || (isBomb && isGameOver)), 'is-game-over' : isGameOver}">
   <span class="pool-info-container">
-    <h3 class="pool-info-content" *ngIf="isExpanded && !isBomb">
+    <h3 class="pool-info-content"
+      *ngIf="isExpanded && !isBomb"
+      [ngClass]="{'is-one' : touchesBombCount === 1, 'is-two'  : touchesBombCount === 2, 'is-three'  : touchesBombCount === 3
+      , 'is-four'  : touchesBombCount === 4, 'is-five'  : touchesBombCount === 5, 'is-six'  : touchesBombCount === 6
+      , 'is-seven'  : touchesBombCount === 7, 'is-eight'  : touchesBombCount === 8
+      }"
+    >
       {{ touchesBombCount !== 0 ? touchesBombCount : '' }}
     </h3>
   </span>

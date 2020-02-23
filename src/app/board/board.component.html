@@ -18,16 +18,20 @@
           (gameHasStarted)="this.gameHasStarted && !this.gameIsGoingOn ? gameHasStartedEvent($event) : gameHasStartedEvent(false)"
 >
 </app-pool>
-</div>
-<div [className]="'game-over'" *ngIf="this.isGameOver"
-     (click)="this.resetGame($event)"
-     (contextmenu)="this.resetGame($event)"
->
-<h1>Game Over</h1>
-<h2>Let's try again?</h2>
+  <div [className]="'game-over'" *ngIf="this.isGameOver"
+       (click)="this.resetGame($event)"
+       (contextmenu)="this.resetGame($event)"
+  >
+    <h1>Game Over</h1>
+    <h2>Let's try again?</h2>
+  </div>
+
+  <div [className]="'winner'" *ngIf="this.isWinner"
+       (click)="this.resetGame($event)"
+       (contextmenu)="this.resetGame($event)"
+  >
+    <h1>You have won</h1>
+    <h2>Let's try again?</h2>
+  </div>
 </div>
 
-<div [className]="'winner'" *ngIf="this.isWinner">
-  <h1>You have won</h1>
-  <h2>Let's try again?</h2>
-</div>
