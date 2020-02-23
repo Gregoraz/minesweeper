@@ -102,26 +102,26 @@ export class BoardComponent implements OnInit {
     return expandedCounter;
   }
 
-  increaseMarkedAsBomb(triggerChanges: boolean): void {
+  increaseMarkedAsBomb = (triggerChanges: boolean): void => {
     this.isMarkedAsBombCounter++;
     if (triggerChanges) {
       this.bombCountOutput.emit(this.bombCount - this.isMarkedAsBombCounter);
     }
-  }
+  };
 
-  decreaseMarkedAsBomb(triggerChanges: boolean): void {
+  decreaseMarkedAsBomb = (triggerChanges: boolean): void => {
     this.isMarkedAsBombCounter--;
     if (triggerChanges) {
       this.bombCountOutput.emit(this.bombCount - this.isMarkedAsBombCounter);
     }
-  }
+  };
 
 
-  isFlaggedEvent(field: FieldComponent) {
+  isFlaggedEvent = (field: FieldComponent) => {
     if (field.isMarkedAsBomb) {
       this.fieldList[field.poolID].isMarkedAsBomb = true;
       this.increaseMarkedAsBomb(true);
-      if (this.isMarkedAsBombCounter === this.bombCount) {
+      if (this.isMarkedAsBombCounter == this.bombCount) {
         this.allFieldMarked = true;
         const expandedFieldCount = this.countExpandedFields();
         if (expandedFieldCount === this.fieldList.length - this.bombCount) {
@@ -133,7 +133,7 @@ export class BoardComponent implements OnInit {
       this.decreaseMarkedAsBomb(true);
       this.allFieldMarked = false;
     }
-  }
+  };
 
   exposedFieldEvent(field: FieldComponent) {
     if (this.checkIfHasBomb(field)) {

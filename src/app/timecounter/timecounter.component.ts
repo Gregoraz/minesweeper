@@ -33,6 +33,7 @@ export class TimecounterComponent implements OnInit, OnChanges {
   };
 
   startTimer() {
+    this.updateTimeCounter();
     this.timeInterval = setInterval(this.updateTimeCounter, 1000);
   }
 
@@ -46,18 +47,20 @@ export class TimecounterComponent implements OnInit, OnChanges {
   }
 
   updateTimeCounter = () => {
-    this.timeCounter++;
-    this.timeDisplay = this.getNumberWithLeading0(this.timeCounter, 6);
+    if (this.timeCounter === 999999) {
+      this.resetTimer();
+    } else {
+      this.timeCounter++;
+      this.timeDisplay = this.getNumberWithLeading0(this.timeCounter, 6);
+    }
   };
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.gameIsRunning.currentValue) {
       this.resetTimer();
       this.startTimer();
-      console.log('Game is running, ', changes.gameIsRunning.currentValue);
     } else {
       this.stopTimer();
-      console.log('Game is running, ', changes.gameIsRunning.currentValue);
     }
   }
 }

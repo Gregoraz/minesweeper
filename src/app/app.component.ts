@@ -21,7 +21,6 @@ export class AppComponent implements OnInit {
   }
 
   gameHasStarted($event) {
-    console.log('halo');
     this.gameIsRunning = $event;
   }
 }
