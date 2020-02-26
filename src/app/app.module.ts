@@ -8,6 +8,7 @@ import { BoardComponent } from './board/board.component';
 import { ResourcesComponent } from './resources/resources.component';
 import { TimecounterComponent } from './timecounter/timecounter.component';
 import { BombcounterComponent } from './bombcounter/bombcounter.component';
+import { DeviceDetectorModule } from 'ngx-device-detector';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { BombcounterComponent } from './bombcounter/bombcounter.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    DeviceDetectorModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

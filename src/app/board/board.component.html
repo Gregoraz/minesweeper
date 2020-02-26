@@ -18,6 +18,35 @@
           (gameHasStarted)="this.gameHasStarted && !this.gameIsGoingOn ? gameHasStartedEvent($event) : gameHasStartedEvent(false)"
 >
 </app-pool>
+  <div [className]="'map'" *ngIf="!isGameOver && !isWinner && !isTutorialClosed"
+       (click)="closeTutorial()"
+       (contextmenu)="closeTutorial()"
+       (mouseenter)="onHoverTutorial(true)"
+       (mouseleave)="onHoverTutorial(false)"
+  >
+    <span [className]="'left-click'" *ngIf="isDesktop">
+      <img [className]="'click-img'" src="../../assets/img/left-click.png" alt="Left click">
+      <img [className]="'arrow'" src="../../assets/img/arrow-right.png" alt="Arrow">
+      <img [className]="'click-img'" src="../../assets/img/expand.png" alt="Flag">
+    </span>
+    <span [className]="'right-click'" *ngIf="isDesktop">
+      <img [className]="'click-img'" src="../../assets/img/right-click.png" alt="Right click">
+      <img [className]="'arrow'" src="../../assets/img/arrow-right.png" alt="Arrow">
+      <img [className]="'click-img'" src="../../assets/img/flag.png" alt="Flag">
+    </span>
+
+    <span [className]="'left-click'" *ngIf="isMobile || isTablet">
+      <img [className]="'click-img'" src="../../assets/img/press.png" alt="Short Tap">
+      <img [className]="'arrow'" src="../../assets/img/arrow-right.png" alt="Arrow">
+      <img [className]="'click-img'" src="../../assets/img/expand.png" alt="Flag">
+    </span>
+    <span [className]="'right-click'" *ngIf="isMobile || isTablet">
+      <img [className]="'click-img'" src="../../assets/img/press-hold.png" alt="Long Tap">
+      <img [className]="'arrow'" src="../../assets/img/arrow-right.png" alt="Arrow">
+      <img [className]="'click-img'" src="../../assets/img/flag.png" alt="Flag">
+    </span>
+    <h3 *ngIf="mouseHoveredOnTutorial" [className]="'close-tutorial'">Close</h3>
+  </div>
   <div [className]="'game-over'" *ngIf="this.isGameOver"
        (click)="this.resetGame($event)"
        (contextmenu)="this.resetGame($event)"

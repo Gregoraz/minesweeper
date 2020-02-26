@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {DeviceDetectorService} from 'ngx-device-detector';
 import {FieldComponent} from '../field/field.component';
 
 @Component({
@@ -16,6 +17,11 @@ export class BoardComponent implements OnInit {
   isMarkedAsBombCounter: number;
   allFieldMarked = false;
   gameIsGoingOn = false;
+  isMobile: boolean;
+  isTablet: boolean;
+  isDesktop: boolean;
+  isTutorialClosed = false;
+  mouseHoveredOnTutorial = false;
 
   @Input() poolCount: number;
   @Input() bombCount: number;
@@ -58,12 +64,18 @@ export class BoardComponent implements OnInit {
     },
   ];
 
+  constructor(private deviceService: DeviceDetectorService) {
+  }
+
   ngOnInit() {
     this.isMarkedAsBombCounter = 0;
     this.createBoardFromPools();
     this.plantTheBombs();
     this.setZerosToEveryField();
     this.createInfoBoxes();
+    this.isMobile = this.deviceService.isMobile();
+    this.isTablet = this.deviceService.isTablet();
+    this.isDesktop = this.deviceService.isDesktop();
   }
 
   resetGame($event) {
@@ -87,6 +99,14 @@ export class BoardComponent implements OnInit {
       this.gameIsGoingOn = false;
     }
   }
+
+  closeTutorial = () => {
+    this.isTutorialClosed = true;
+  };
+
+  onHoverTutorial = (isHovered: boolean): void => {
+    this.mouseHoveredOnTutorial = isHovered;
+  };
 
   gameHasStartedEvent($event) {
     this.gameHasStarted.emit($event);
